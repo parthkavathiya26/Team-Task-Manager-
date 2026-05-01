@@ -10,26 +10,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// API Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/projects", require("./routes/project"));
 app.use("/api/tasks", require("./routes/task"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 
-// Health route
+// Health check
 app.get("/health", (req, res) => {
   res.send("OK");
 });
 
-// 🔥 Serve frontend build
-app.use(express.static(path.join(__dirname, "../frontend/build")));
+// 🔥 FRONTEND SERVE (FINAL CORRECT)
+app.use(express.static(path.join(__dirname, "build")));
 
-// 🔥 FINAL FIX (NO "*" ROUTE)
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
-// MongoDB + Server start
+// MongoDB + Server
 const PORT = process.env.PORT || 8080;
 
 mongoose.connect(process.env.MONGO_URI)
