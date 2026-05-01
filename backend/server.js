@@ -10,25 +10,35 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Routes
+// ✅ API Routes (पहले ये रहेंगे)
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/projects", require("./routes/project"));
 app.use("/api/tasks", require("./routes/task"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 
-// Health
+// ✅ Health check
 app.get("/health", (req, res) => {
   res.send("OK");
 });
 
-// 🔥 Serve React build (FINAL FIX)
-app.use(express.static(path.join(__dirname, "build")));
+// 🔥 FRONTEND SERVE (SAFE WAY)
+const buildPath = path.join(__dirname, "build");
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
+// Static files serve
+app.use(express.static(buildPath));
+
+// ⚠️ ONLY non-API routes fallback
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(buildPath, "index.html"));
 });
 
-// DB + Server
+// ❌ Error handler (debug helpful)
+app.use((err, req, res, next) => {
+  console.error("❌ Server Error:", err);
+  res.status(500).send("Server Error");
+});
+
+// MongoDB + Server start
 const PORT = process.env.PORT || 8080;
 
 mongoose.connect(process.env.MONGO_URI)
@@ -39,4 +49,7 @@ mongoose.connect(process.env.MONGO_URI)
       console.log(`🚀 Server running on port ${PORT}`);
     });
   })
-  .catch(err => console.error(err));
+  .catch(err => {
+    console.error("❌ MongoDB Error:", err);
+    process.exit(1); // important for Railway
+  });
