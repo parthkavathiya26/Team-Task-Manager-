@@ -1,43 +1,44 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
 
-// Routes
-const authRoutes = require("./routes/auth");
-const projectRoutes = require("./routes/project");
-const taskRoutes = require("./routes/task");
-const dashboardRoutes = require("./routes/dashboard");
-
 // Middleware
-app.use(cors({ origin: "*" }));
+app.use(cors());
 app.use(express.json());
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+// Routes
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/projects", require("./routes/project"));
+app.use("/api/tasks", require("./routes/task"));
+app.use("/api/dashboard", require("./routes/dashboard"));
 
 // Health route
 app.get("/health", (req, res) => {
   res.send("OK");
 });
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/tasks", taskRoutes);
-app.use("/api/dashboard", dashboardRoutes);
+// 🔥 FRONTEND SERVE (IMPORTANT)
+app.use(express.static(path.join(__dirname, "../frontend/build")));
 
-// MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB Connected Successfully"))
-  .catch(err => console.log("❌ MongoDB Error:", err));
-
-// Server start
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
 });
+
+// MongoDB + Server start
+const PORT = process.env.PORT || 8080;
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅ MongoDB Connected Successfully");
+
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error("❌ MongoDB Error:", err);
+  });

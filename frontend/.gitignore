@@ -15,8 +15,7 @@ frontend/.env
 # ======================
 # Build folders
 # ======================
-build
-frontend/build
+
 
 # ======================
 # Logs
