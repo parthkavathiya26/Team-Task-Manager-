@@ -21,10 +21,11 @@ app.get("/health", (req, res) => {
   res.send("OK");
 });
 
-// 🔥 FRONTEND SERVE (IMPORTANT)
+// 🔥 Serve frontend build
 app.use(express.static(path.join(__dirname, "../frontend/build")));
 
-app.get("/*", (req, res) => {
+// 🔥 FINAL FIX (NO "*" ROUTE)
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/build/index.html"));
 });
 
