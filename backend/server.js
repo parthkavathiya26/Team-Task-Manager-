@@ -10,25 +10,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API Routes
+// Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/projects", require("./routes/project"));
 app.use("/api/tasks", require("./routes/task"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 
-// Health check
+// Health
 app.get("/health", (req, res) => {
   res.send("OK");
 });
 
-// 🔥 FRONTEND SERVE (FINAL CORRECT)
+// 🔥 Serve React build (FINAL FIX)
 app.use(express.static(path.join(__dirname, "build")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
-// MongoDB + Server
+// DB + Server
 const PORT = process.env.PORT || 8080;
 
 mongoose.connect(process.env.MONGO_URI)
@@ -39,6 +39,4 @@ mongoose.connect(process.env.MONGO_URI)
       console.log(`🚀 Server running on port ${PORT}`);
     });
   })
-  .catch(err => {
-    console.error("❌ MongoDB Error:", err);
-  });
+  .catch(err => console.error(err));
