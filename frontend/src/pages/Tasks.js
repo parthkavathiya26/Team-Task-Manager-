@@ -6,10 +6,12 @@ export default function Tasks() {
   const [title, setTitle] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
   const [project, setProject] = useState("");
+  const [priority, setPriority] = useState("Medium");
+  const [dueDate, setDueDate] = useState("");
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
 
-  // ✅ Fetch Tasks
+  // Fetch Tasks
   const fetchTasks = async () => {
     try {
       const res = await api.get("/api/tasks");
@@ -19,7 +21,7 @@ export default function Tasks() {
     }
   };
 
-  // ✅ Fetch Users
+  // Fetch Users
   const fetchUsers = async () => {
     try {
       const res = await api.get("/api/auth/users");
@@ -29,7 +31,7 @@ export default function Tasks() {
     }
   };
 
-  // ✅ Fetch Projects
+  // Fetch Projects
   const fetchProjects = async () => {
     try {
       const res = await api.get("/api/projects");
@@ -39,7 +41,7 @@ export default function Tasks() {
     }
   };
 
-  // ✅ Add Task
+  // Add Task
   const addTask = async () => {
     try {
       if (!title) return alert("Enter title");
@@ -50,6 +52,8 @@ export default function Tasks() {
         title,
         assignedTo,
         project,
+        priority,
+        dueDate,
       });
 
       alert("Task Created ✅");
@@ -57,6 +61,8 @@ export default function Tasks() {
       setTitle("");
       setAssignedTo("");
       setProject("");
+      setPriority("Medium");
+      setDueDate("");
 
       fetchTasks();
     } catch (err) {
@@ -65,26 +71,18 @@ export default function Tasks() {
     }
   };
 
-  // ✅ FIXED Mark Done
+  // Mark Done
   const markDone = async (id) => {
-    try {
-      await api.put(`/api/tasks/${id}`, {
-        status: "Completed", // 🔥 FIX
-      });
-      fetchTasks();
-    } catch (err) {
-      console.log("Mark Done Error:", err.response?.data);
-    }
+    await api.put(`/api/tasks/${id}`, {
+      status: "Completed",
+    });
+    fetchTasks();
   };
 
-  // ✅ Delete Task
+  // Delete Task
   const deleteTask = async (id) => {
-    try {
-      await api.delete(`/api/tasks/${id}`);
-      fetchTasks();
-    } catch (err) {
-      console.log("Delete Error:", err.response?.data);
-    }
+    await api.delete(`/api/tasks/${id}`);
+    fetchTasks();
   };
 
   useEffect(() => {
@@ -126,35 +124,42 @@ export default function Tasks() {
 
       <br /><br />
 
+      {/* 🔥 NEW */}
+      <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+      </select>
+
+      <br /><br />
+
+      <input
+        type="date"
+        value={dueDate}
+        onChange={(e) => setDueDate(e.target.value)}
+      />
+
+      <br /><br />
+
       <button onClick={addTask}>Add Task</button>
 
       <ul>
         {tasks.map((t) => (
-          <li key={t._id} style={{ marginBottom: 10 }}>
-            
+          <li key={t._id} style={{ marginBottom: 15 }}>
             <strong>{t.title}</strong>
 
-            <span style={{ marginLeft: 10 }}>
-              Status:
-              <span
-                style={{
-                  color: t.status === "Completed" ? "green" : "orange",
-                  fontWeight: "bold",
-                  marginLeft: 5,
-                }}
-              >
-                {t.status}
-              </span>
-            </span>
+            <div>Status: {t.status}</div>
+            <div>Priority: {t.priority}</div>
+            <div>
+              Due:{" "}
+              {t.dueDate ? new Date(t.dueDate).toDateString() : "N/A"}
+            </div>
 
-            <br />
-
-            {t.status !== "Completed" && ( // 🔥 FIX
-              <button onClick={() => markDone(t._id)}>Mark Done</button>
+            {t.status !== "Completed" && (
+              <button onClick={() => markDone(t._id)}>Done</button>
             )}
 
             <button onClick={() => deleteTask(t._id)}>Delete</button>
-
           </li>
         ))}
       </ul>

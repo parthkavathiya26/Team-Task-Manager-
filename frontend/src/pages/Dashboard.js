@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../utils/api";
+import { api } from "../api";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
