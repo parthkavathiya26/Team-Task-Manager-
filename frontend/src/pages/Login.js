@@ -24,55 +24,30 @@ export default function Login() {
   };
 
   return (
-    <div style={{ padding: 40 }}>
-      <h2>Login</h2>
 
-      {/* EMAIL INPUT */}
-      <input
-        type="email"
-        placeholder="Enter Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{
-          width: "300px",
-          padding: "10px",
-          fontSize: "16px",
-          marginBottom: "10px"
-        }}
-      />
+  <div style={{ padding: 40 }}>
+    <h2>Login</h2>
 
-      <br />
+    <input
+      placeholder="Enter Email"
+      onChange={(e) => setEmail(e.target.value)}
+    />
+    <br /><br />
 
-      {/* PASSWORD INPUT */}
-      <input
-        type="password"
-        placeholder="Enter Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{
-          width: "300px",
-          padding: "10px",
-          fontSize: "16px",
-          marginBottom: "10px"
-        }}
-      />
+    <input
+      type="password"
+      placeholder="Enter Password"
+      onChange={(e) => setPassword(e.target.value)}
+    />
+    <br /><br />
 
-      <br />
+    <button onClick={handleLogin}>Login</button>
 
-      {/* BUTTON */}
-      <button
-        onClick={handleLogin}
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-          fontSize: "16px"
-        }}
-      >
-        Login
-      </button>
-    </div>
-  );
+    <br /><br />
+
+    <p>
+      Don't have an account? <a href="/signup">Signup</a>
+    </p>
+  </div>
+);
 }
