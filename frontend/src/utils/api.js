@@ -1,15 +1,14 @@
 import axios from "axios";
 
-const API = "http://localhost:5000";
-
 export const api = axios.create({
-  baseURL: API,
+  baseURL: "https://team-task-manager-production-02b2.up.railway.app",
 });
 
+// 🔐 Auto attach token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = token;
   }
   return config;
 });

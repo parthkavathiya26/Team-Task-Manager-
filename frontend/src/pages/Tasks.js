@@ -4,11 +4,10 @@ import { api } from "../utils/api";
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
-
-  const [users, setUsers] = useState([]);
-  const [projects, setProjects] = useState([]);
   const [assignedTo, setAssignedTo] = useState("");
   const [project, setProject] = useState("");
+  const [users, setUsers] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   const fetchTasks = async () => {
     const res = await api.get("/api/tasks");
@@ -26,13 +25,12 @@ export default function Tasks() {
   };
 
   const addTask = async () => {
-    if (!title) return;
+    if (!title) return alert("Enter title");
 
     await api.post("/api/tasks", {
       title,
-      status: "Pending",
       assignedTo,
-      project
+      project,
     });
 
     setTitle("");
@@ -43,7 +41,7 @@ export default function Tasks() {
 
   const markDone = async (id) => {
     await api.put(`/api/tasks/${id}`, {
-      status: "Completed"
+      status: "Done",
     });
     fetchTasks();
   };
@@ -60,63 +58,53 @@ export default function Tasks() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f4f7fb", padding: 40 }}>
-      <div style={{
-        maxWidth: "650px",
-        margin: "auto",
-        background: "#fff",
-        padding: "30px",
-        borderRadius: "12px",
-        boxShadow: "0 5px 20px rgba(0,0,0,0.1)"
-      }}>
-        <h2>Task Manager</h2>
+    <div style={{ padding: 40 }}>
+      <h2>Task Manager</h2>
 
-        <input
-          placeholder="Task title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+      <input
+        placeholder="Task title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <br /><br />
 
-        <br /><br />
+      <select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)}>
+        <option value="">Assign User</option>
+        {users.map((u) => (
+          <option key={u._id} value={u._id}>
+            {u.name}
+          </option>
+        ))}
+      </select>
 
-        <select onChange={(e) => setAssignedTo(e.target.value)}>
-          <option value="">Assign User</option>
-          {users.map(u => (
-            <option key={u._id} value={u._id}>
-              {u.name} ({u.role})
-            </option>
-          ))}
-        </select>
+      <br /><br />
 
-        <br /><br />
+      <select value={project} onChange={(e) => setProject(e.target.value)}>
+        <option value="">Select Project</option>
+        {projects.map((p) => (
+          <option key={p._id} value={p._id}>
+            {p.name}
+          </option>
+        ))}
+      </select>
 
-        <select onChange={(e) => setProject(e.target.value)}>
-          <option value="">Select Project</option>
-          {projects.map(p => (
-            <option key={p._id} value={p._id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
+      <br /><br />
 
-        <br /><br />
+      <button onClick={addTask}>Add Task</button>
 
-        <button onClick={addTask}>Add Task</button>
+      <ul>
+        {tasks.map((t) => (
+          <li key={t._id}>
+            {t.title} - {t.status}
 
-        <ul>
-          {tasks.map(t => (
-            <li key={t._id}>
-              {t.title} ({t.status})
+            {t.status !== "Done" && (
+              <button onClick={() => markDone(t._id)}>Done</button>
+            )}
 
-              {t.status !== "Completed" && (
-                <button onClick={() => markDone(t._id)}>Done</button>
-              )}
-
-              <button onClick={() => deleteTask(t._id)}>Delete</button>
-            </li>
-          ))}
-        </ul>
-      </div>
+            <button onClick={() => deleteTask(t._id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

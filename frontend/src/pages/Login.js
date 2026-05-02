@@ -9,7 +9,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("/api/auth/login", {
+      const res = await axios.post("https://team-task-manager-production-02b2.up.railway.app/api/auth/login", {
         email,
         password,
       });
