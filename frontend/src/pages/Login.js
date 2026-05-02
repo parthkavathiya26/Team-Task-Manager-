@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { api } from "../utils/api";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,7 +9,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("https://team-task-manager-production-02b2.up.railway.app/api/auth/login", {
+      const res = await api.post("/api/auth/login", {
         email,
         password,
       });
@@ -18,36 +18,35 @@ export default function Login() {
       nav("/dashboard");
 
     } catch (err) {
-  console.log(err.response?.data);
-  alert(err.response?.data?.message || "Login failed");
-}
+      console.log(err.response?.data);
+      alert(err.response?.data?.message || "Login failed");
+    }
   };
 
   return (
+    <div style={{ padding: 40 }}>
+      <h2>Login</h2>
 
-  <div style={{ padding: 40 }}>
-    <h2>Login</h2>
+      <input
+        placeholder="Enter Email"
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <br /><br />
 
-    <input
-      placeholder="Enter Email"
-      onChange={(e) => setEmail(e.target.value)}
-    />
-    <br /><br />
+      <input
+        type="password"
+        placeholder="Enter Password"
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <br /><br />
 
-    <input
-      type="password"
-      placeholder="Enter Password"
-      onChange={(e) => setPassword(e.target.value)}
-    />
-    <br /><br />
+      <button onClick={handleLogin}>Login</button>
 
-    <button onClick={handleLogin}>Login</button>
+      <br /><br />
 
-    <br /><br />
-
-    <p>
-      Don't have an account? <a href="/signup">Signup</a>
-    </p>
-  </div>
-);
+      <p>
+        Don't have an account? <a href="/signup">Signup</a>
+      </p>
+    </div>
+  );
 }
