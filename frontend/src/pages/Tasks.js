@@ -40,33 +40,31 @@ export default function Tasks() {
   };
 
   // ✅ Add Task (MAIN FIX)
-  const addTask = async () => {
-    try {
-      if (!title) return alert("Enter title");
+const addTask = async () => {
+  try {
+    if (!title) return alert("Enter title");
+    if (!assignedTo) return alert("Select user");
+    if (!project) return alert("Select project");
 
-      if (!assignedTo) return alert("Select user");
-      if (!project) return alert("Select project");
+    await api.post("/api/tasks", {
+      title,
+      assignedTo,
+      project,
+    });
 
-      await api.post("/api/tasks", {
-        title,
-        assignedTo,
-        project,
-      });
+    alert("Task Created ✅");
 
-      alert("Task Created ✅");
+    setTitle("");
+    setAssignedTo("");
+    setProject("");
 
-      setTitle("");
-      setAssignedTo("");
-      setProject("");
+    fetchTasks();
 
-      fetchTasks();
-
-    } catch (err) {
-      console.log("ADD TASK ERROR:", err.response?.data);
-      alert(err.response?.data?.message || "Task failed ❌");
-    }
-  };
-
+  } catch (err) {
+    console.log("ERROR:", err.response?.data);
+    alert(err.response?.data?.message || "Task failed ❌");
+  }
+};
   // ✅ Mark Done
   const markDone = async (id) => {
     try {

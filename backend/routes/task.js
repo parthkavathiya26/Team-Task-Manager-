@@ -4,28 +4,28 @@ const Task = require("../models/Task");
 const authMiddleware = require("../middleware/authMiddleware");
 
 // ✅ Create Task
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const { title, description, dueDate, priority, assignedTo, project } = req.body;
+    const { title, assignedTo, project } = req.body;
 
-    if (!title) {
-      return res.status(400).json({ message: "Title is required" });
+    // ✅ validation
+    if (!title || !assignedTo || !project) {
+      return res.status(400).json({ message: "All fields required" });
     }
 
-    const task = await Task.create({
+    const task = new Task({
       title,
-      description,
-      dueDate,
-      priority,
-      status: "To Do",
-      assignedTo: assignedTo || req.user.id,
-      project
+      assignedTo,
+      project,
     });
+
+    await task.save();
 
     res.status(201).json(task);
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("TASK ERROR:", err);
+    res.status(500).json({ message: "Server Error", error: err.message });
   }
 });
 

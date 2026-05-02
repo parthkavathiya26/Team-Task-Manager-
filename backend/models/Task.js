@@ -8,6 +8,7 @@ const taskSchema = new mongoose.Schema({
 
   description: {
     type: String,
+    default: "",
   },
 
   status: {
@@ -19,13 +20,13 @@ const taskSchema = new mongoose.Schema({
   project: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Project",
+    required: true,   // ✅ add this
   },
 
-  // 🔥 IMPORTANT
   assignedTo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    required: true,
   },
 
   dueDate: {
