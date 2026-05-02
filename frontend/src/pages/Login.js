@@ -16,9 +16,10 @@ export default function Login() {
 
       localStorage.setItem("token", res.data.token);
       nav("/dashboard");
+
     } catch (err) {
-      console.log(err);
-      alert("Login failed");
+      console.log("ERROR:", err.response?.data);
+      alert(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -26,20 +27,52 @@ export default function Login() {
     <div style={{ padding: 40 }}>
       <h2>Login</h2>
 
+      {/* EMAIL INPUT */}
       <input
-        placeholder="Email"
+        type="email"
+        placeholder="Enter Email"
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
+        style={{
+          width: "300px",
+          padding: "10px",
+          fontSize: "16px",
+          marginBottom: "10px"
+        }}
       />
-      <br /><br />
 
+      <br />
+
+      {/* PASSWORD INPUT */}
       <input
         type="password"
-        placeholder="Password"
+        placeholder="Enter Password"
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
+        style={{
+          width: "300px",
+          padding: "10px",
+          fontSize: "16px",
+          marginBottom: "10px"
+        }}
       />
-      <br /><br />
 
-      <button onClick={handleLogin}>Login</button>
+      <br />
+
+      {/* BUTTON */}
+      <button
+        onClick={handleLogin}
+        style={{
+          padding: "10px 20px",
+          backgroundColor: "#007bff",
+          color: "white",
+          border: "none",
+          cursor: "pointer",
+          fontSize: "16px"
+        }}
+      >
+        Login
+      </button>
     </div>
   );
 }
