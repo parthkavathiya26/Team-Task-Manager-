@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../utils/api";
+import { api } from "../api"; // ✅ FIXED PATH
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -9,48 +9,87 @@ export default function Tasks() {
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
 
+  // ✅ Fetch Tasks
   const fetchTasks = async () => {
-    const res = await api.get("/api/tasks");
-    setTasks(res.data);
+    try {
+      const res = await api.get("/api/tasks");
+      setTasks(res.data);
+    } catch (err) {
+      console.log("Fetch Tasks Error:", err.response?.data);
+    }
   };
 
+  // ✅ Fetch Users
   const fetchUsers = async () => {
-    const res = await api.get("/api/auth/users");
-    setUsers(res.data);
+    try {
+      const res = await api.get("/api/auth/users");
+      setUsers(res.data);
+    } catch (err) {
+      console.log("Fetch Users Error:", err.response?.data);
+    }
   };
 
+  // ✅ Fetch Projects
   const fetchProjects = async () => {
-    const res = await api.get("/api/projects");
-    setProjects(res.data);
+    try {
+      const res = await api.get("/api/projects");
+      setProjects(res.data);
+    } catch (err) {
+      console.log("Fetch Projects Error:", err.response?.data);
+    }
   };
 
+  // ✅ Add Task (MAIN FIX)
   const addTask = async () => {
-    if (!title) return alert("Enter title");
+    try {
+      if (!title) return alert("Enter title");
 
-    await api.post("/api/tasks", {
-      title,
-      assignedTo,
-      project,
-    });
+      if (!assignedTo) return alert("Select user");
+      if (!project) return alert("Select project");
 
-    setTitle("");
-    setAssignedTo("");
-    setProject("");
-    fetchTasks();
+      await api.post("/api/tasks", {
+        title,
+        assignedTo,
+        project,
+      });
+
+      alert("Task Created ✅");
+
+      setTitle("");
+      setAssignedTo("");
+      setProject("");
+
+      fetchTasks();
+
+    } catch (err) {
+      console.log("ADD TASK ERROR:", err.response?.data);
+      alert(err.response?.data?.message || "Task failed ❌");
+    }
   };
 
+  // ✅ Mark Done
   const markDone = async (id) => {
-    await api.put(`/api/tasks/${id}`, {
-      status: "Done",
-    });
-    fetchTasks();
+    try {
+      await api.put(`/api/tasks/${id}`, {
+        status: "Done",
+      });
+      fetchTasks();
+    } catch (err) {
+      console.log("Mark Done Error:", err.response?.data);
+    }
   };
 
+  // ✅ Delete Task
   const deleteTask = async (id) => {
-    await api.delete(`/api/tasks/${id}`);
-    fetchTasks();
+    try {
+      await api.delete(`/api/tasks/${id}`);
+      fetchTasks();
+    } catch (err) {
+      console.log("Delete Error:", err.response?.data);
+    }
   };
 
+  // ✅ Load Data
   useEffect(() => {
     fetchTasks();
     fetchUsers();
