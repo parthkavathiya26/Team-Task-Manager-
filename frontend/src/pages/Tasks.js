@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../api"; // ✅ FIXED PATH
+import { api } from "../api";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState([]);
@@ -39,37 +39,37 @@ export default function Tasks() {
     }
   };
 
-  // ✅ Add Task (MAIN FIX)
-const addTask = async () => {
-  try {
-    if (!title) return alert("Enter title");
-    if (!assignedTo) return alert("Select user");
-    if (!project) return alert("Select project");
+  // ✅ Add Task
+  const addTask = async () => {
+    try {
+      if (!title) return alert("Enter title");
+      if (!assignedTo) return alert("Select user");
+      if (!project) return alert("Select project");
 
-    await api.post("/api/tasks", {
-      title,
-      assignedTo,
-      project,
-    });
+      await api.post("/api/tasks", {
+        title,
+        assignedTo,
+        project,
+      });
 
-    alert("Task Created ✅");
+      alert("Task Created ✅");
 
-    setTitle("");
-    setAssignedTo("");
-    setProject("");
+      setTitle("");
+      setAssignedTo("");
+      setProject("");
 
-    fetchTasks();
+      fetchTasks();
+    } catch (err) {
+      console.log("ERROR:", err.response?.data);
+      alert(err.response?.data?.message || "Task failed ❌");
+    }
+  };
 
-  } catch (err) {
-    console.log("ERROR:", err.response?.data);
-    alert(err.response?.data?.message || "Task failed ❌");
-  }
-};
-  // ✅ Mark Done
+  // ✅ FIXED Mark Done
   const markDone = async (id) => {
     try {
       await api.put(`/api/tasks/${id}`, {
-        status: "Done",
+        status: "Completed", // 🔥 FIX
       });
       fetchTasks();
     } catch (err) {
@@ -87,7 +87,6 @@ const addTask = async () => {
     }
   };
 
-  // ✅ Load Data
   useEffect(() => {
     fetchTasks();
     fetchUsers();
@@ -131,14 +130,31 @@ const addTask = async () => {
 
       <ul>
         {tasks.map((t) => (
-          <li key={t._id}>
-            {t.title} - {t.status}
+          <li key={t._id} style={{ marginBottom: 10 }}>
+            
+            <strong>{t.title}</strong>
 
-            {t.status !== "Done" && (
-              <button onClick={() => markDone(t._id)}>Done</button>
+            <span style={{ marginLeft: 10 }}>
+              Status:
+              <span
+                style={{
+                  color: t.status === "Completed" ? "green" : "orange",
+                  fontWeight: "bold",
+                  marginLeft: 5,
+                }}
+              >
+                {t.status}
+              </span>
+            </span>
+
+            <br />
+
+            {t.status !== "Completed" && ( // 🔥 FIX
+              <button onClick={() => markDone(t._id)}>Mark Done</button>
             )}
 
             <button onClick={() => deleteTask(t._id)}>Delete</button>
+
           </li>
         ))}
       </ul>
